@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, MinLength } from 'class-validator';
 import { IUser } from 'src/entities/user.entity';
 
 export class LoginUserDTO implements IUser {

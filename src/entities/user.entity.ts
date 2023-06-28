@@ -1,5 +1,5 @@
 import { AbstractEntity } from 'src/entities/database.entity';
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 
 export interface IUser {
   id?: string;
