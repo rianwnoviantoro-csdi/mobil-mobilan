@@ -4,7 +4,9 @@ import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDTO } from '../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 import { Exception } from 'src/utils/custom-exception';
+import { LoginUserDTO } from '../dto/login-user.dto';
 
 @Injectable()
 export class UserService {
@@ -14,7 +16,7 @@ export class UserService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  async create(body: CreateUserDTO): Promise<User | string> {
+  async create(body: CreateUserDTO): Promise<User> {
     const existUser = await this.findOneByEmail(body.email);
 
     if (existUser)
@@ -32,6 +34,27 @@ export class UserService {
     delete success.password;
 
     return success;
+  }
+
+  async authenticate(body: LoginUserDTO): Promise<object> {
+    const exist = await this.findOneByEmail(body.email);
+
+    if (!exist) throw new Exception(`User ${body.email} not found`, 404);
+
+    if (!exist.is_active)
+      throw new Exception(`User ${body.email} has been deactivated`, 401);
+
+    const validPassword = await bcrypt.compare(body.password, exist.password);
+
+    if (!validPassword) throw new Exception(`Invalid credentials`, 400);
+
+    const token = jwt.sign({ userId: exist.id }, 'seCr3tC0y', {
+      expiresIn: '30d',
+    });
+
+    delete exist.password;
+
+    return { user: exist, token: token };
   }
 
   async findOneByEmail(email: string): Promise<User | undefined> {
