@@ -1,7 +1,7 @@
 import { AbstractEntity } from 'src/entities/database.entity';
 import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
-export interface IMenu {
+export interface IUser {
   id?: string;
   name?: string;
   email?: string;
