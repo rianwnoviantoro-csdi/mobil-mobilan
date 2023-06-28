@@ -4,6 +4,7 @@ import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDTO } from '../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { Exception } from 'src/utils/custom-exception';
 
 @Injectable()
 export class UserService {
@@ -16,7 +17,8 @@ export class UserService {
   async create(body: CreateUserDTO): Promise<User | string> {
     const existUser = await this.findOneByEmail(body.email);
 
-    if (existUser) throw new Error(`User ${body.email} already exists`);
+    if (existUser)
+      throw new Exception(`User ${body.email} already exists`, 400);
 
     const userInstance = new User({
       ...body,
@@ -25,7 +27,7 @@ export class UserService {
 
     const success = await this.entityManager.save(userInstance);
 
-    if (!success) throw new Error('Something went wrong.');
+    if (!success) throw new Exception('Something went wrong.', 500);
 
     delete success.password;
 
