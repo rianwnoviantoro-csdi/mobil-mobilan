@@ -1,5 +1,6 @@
 import { AbstractEntity } from 'src/entities/database.entity';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
+import { User } from './user.entity';
 
 export interface IRole {
   id?: string;
@@ -20,4 +21,7 @@ export class Role extends AbstractEntity<Role> {
 
   @Column({ name: 'is_active', nullable: false, default: true })
   is_active: boolean;
+
+  @OneToMany(() => User, (user) => user.role_id)
+  users: User[];
 }

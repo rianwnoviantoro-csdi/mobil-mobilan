@@ -1,5 +1,6 @@
 import { AbstractEntity } from 'src/entities/database.entity';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Role } from './role.entity';
 
 export interface IUser {
   id?: string;
@@ -9,6 +10,8 @@ export interface IUser {
   is_active?: boolean;
   created_at?: Date;
   updated_at?: Date;
+
+  role_id?: Role;
 }
 
 @Entity('users')
@@ -24,4 +27,8 @@ export class User extends AbstractEntity<User> {
 
   @Column({ name: 'is_active', nullable: false, default: true })
   is_active: boolean;
+
+  @ManyToOne(() => Role, (role) => role.users, { cascade: true })
+  @JoinColumn({ name: 'role_id' })
+  role_id: string;
 }
