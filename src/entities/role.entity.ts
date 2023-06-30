@@ -22,6 +22,6 @@ export class Role extends AbstractEntity<Role> {
   @Column({ name: 'is_active', nullable: false, default: true })
   is_active: boolean;
 
-  @OneToMany(() => User, (user) => user.role_id)
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
 }

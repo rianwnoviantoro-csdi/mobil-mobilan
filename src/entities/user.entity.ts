@@ -11,7 +11,7 @@ export interface IUser {
   created_at?: Date;
   updated_at?: Date;
 
-  role_id?: Role;
+  role?: Role;
 }
 
 @Entity('users')
@@ -30,5 +30,5 @@ export class User extends AbstractEntity<User> {
 
   @ManyToOne(() => Role, (role) => role.users, { cascade: true })
   @JoinColumn({ name: 'role_id' })
-  role_id: string;
+  role: string;
 }

@@ -4,7 +4,7 @@ import { User } from 'src/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDTO } from '../dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 import { Exception } from 'src/utils/custom-exception';
 import { LoginUserDTO } from '../dto/login-user.dto';
 
@@ -14,6 +14,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly entityManager: EntityManager,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(body: CreateUserDTO): Promise<User> {
@@ -48,9 +49,7 @@ export class UserService {
 
     if (!validPassword) throw new Exception(`Invalid credentials`, 400);
 
-    const token = jwt.sign({ userId: exist.id }, 'seCr3tC0y', {
-      expiresIn: '30d',
-    });
+    const token = await this.jwtService.sign({ id: exist.id });
 
     delete exist.password;
 
@@ -58,10 +57,28 @@ export class UserService {
   }
 
   async findOneByEmail(email: string): Promise<User | undefined> {
-    const exist = await this.userRepository.findOne({ where: { email } });
+    const exist = await this.userRepository.findOne({
+      where: { email },
+      relations: ['role'],
+    });
 
     if (!exist) return undefined;
 
     return exist;
+  }
+
+  async findById(id: string): Promise<User | undefined> {
+    const exist = await this.userRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
+
+    if (!exist) return undefined;
+
+    return exist;
+  }
+
+  async validateUser(userId: string) {
+    return await this.findById(userId);
   }
 }
