@@ -5,6 +5,7 @@ import { UserModule } from './modules/user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { RoleModule } from './modules/role/role.module';
+import { PermissionModule } from './modules/permission/permission.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { RoleModule } from './modules/role/role.module';
     DatabaseModule,
     UserModule,
     RoleModule,
+    PermissionModule,
   ],
   controllers: [],
   providers: [

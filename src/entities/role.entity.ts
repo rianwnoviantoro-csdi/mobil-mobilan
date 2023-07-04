@@ -1,6 +1,7 @@
 import { AbstractEntity } from 'src/entities/database.entity';
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { User } from './user.entity';
+import { Permission } from './permission.entity';
 
 export interface IRole {
   id?: string;
@@ -9,6 +10,8 @@ export interface IRole {
   is_active?: boolean;
   created_at?: Date;
   updated_at?: Date;
+
+  permissions?: Permission[];
 }
 
 @Entity('roles')
@@ -24,4 +27,16 @@ export class Role extends AbstractEntity<Role> {
 
   @OneToMany(() => User, (user) => user.role)
   users: User[];
+
+  //Many-to-many relation with permission
+  @ManyToMany(() => Permission, { cascade: true })
+  @JoinTable({
+    name: 'role_permission',
+    joinColumn: { name: 'role_id', referencedColumnName: 'id' },
+    inverseJoinColumn: {
+      name: 'permission_id',
+      referencedColumnName: 'id',
+    },
+  })
+  permissions: Permission[];
 }

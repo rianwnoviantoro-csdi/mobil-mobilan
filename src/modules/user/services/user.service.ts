@@ -49,9 +49,10 @@ export class UserService {
 
     if (!validPassword) throw new Exception(`Invalid credentials`, 400);
 
-    const token = await this.jwtService.sign({ id: exist.id });
+    const token = this.jwtService.sign({ id: exist.id });
 
     delete exist.password;
+    delete exist.role;
 
     return { user: exist, token: token };
   }
@@ -59,7 +60,7 @@ export class UserService {
   async findOneByEmail(email: string): Promise<User | undefined> {
     const exist = await this.userRepository.findOne({
       where: { email },
-      relations: ['role'],
+      relations: ['role', 'role.permissions'],
     });
 
     if (!exist) return undefined;
@@ -70,7 +71,7 @@ export class UserService {
   async findById(id: string): Promise<User | undefined> {
     const exist = await this.userRepository.findOne({
       where: { id },
-      relations: ['role'],
+      relations: ['role', 'role.permissions'],
     });
 
     if (!exist) return undefined;

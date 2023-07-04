@@ -16,7 +16,7 @@ export class RoleService {
   async create(body: CreateRoleDTO): Promise<Role> {
     const existRole = await this.findOneByName(body.name);
 
-    if (existRole) throw new Exception(`User ${body.name} already exists`, 400);
+    if (existRole) throw new Exception(`Role ${body.name} already exists`, 400);
 
     const roleInstance = new Role({ ...body });
 
@@ -25,6 +25,12 @@ export class RoleService {
     if (!success) throw new Exception('Something went wrong.', 500);
 
     return success;
+  }
+
+  async getList(): Promise<Role[] | undefined> {
+    const result = await this.roleRepository.find();
+
+    return result;
   }
 
   async findOneByName(name: string): Promise<Role | undefined> {
