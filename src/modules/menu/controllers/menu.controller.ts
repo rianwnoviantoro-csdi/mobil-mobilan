@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UseGuards,
@@ -24,6 +25,12 @@ export class MenuController {
     @Req() req: any,
   ) {
     const result = await this.menuService.create(body, req.user);
+    return { statusCode: 200, message: 'Success.', data: result };
+  }
+
+  @Get()
+  async List() {
+    const result = await this.menuService.getAllMenu();
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

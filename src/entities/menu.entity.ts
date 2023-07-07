@@ -7,7 +7,7 @@ export interface IMenu {
   name?: string;
   path?: string;
   parent?: Menu;
-  subMenus?: Menu[];
+  sub_menu?: Menu[];
   is_active?: boolean;
   created_at?: Date;
   created_by?: User;
@@ -23,15 +23,15 @@ export class Menu extends AbstractEntity<Menu> {
   @Column({ name: 'path', nullable: false, unique: true })
   path: string;
 
-  @ManyToOne(() => Menu, (menu) => menu.subMenus, {
+  @ManyToOne(() => Menu, (menu) => menu.sub_menu, {
     nullable: true,
     cascade: true,
   })
   @JoinColumn({ name: 'parent_id' })
   parent: Menu;
 
-  @OneToMany(() => Menu, (subMenu) => subMenu.parent)
-  subMenus: Menu[];
+  @OneToMany(() => Menu, (sub_menu) => sub_menu.parent)
+  sub_menu: Menu[];
 
   @Column({ name: 'is_active', nullable: false, default: true })
   is_active: boolean;

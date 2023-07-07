@@ -41,6 +41,33 @@ export class MenuService {
     return success;
   }
 
+  async getAllMenu(): Promise<Menu[] | undefined> {
+    const success = await this.menuRepository
+      .createQueryBuilder('menu')
+      .leftJoinAndSelect('menu.sub_menu', 'sub_menu')
+      .leftJoinAndSelect('menu.created_by', 'created_by')
+      .leftJoinAndSelect('menu.updated_by', 'updated_by')
+      .select([
+        'menu',
+        'sub_menu.id',
+        'sub_menu.name',
+        'sub_menu.path',
+        'created_by.id',
+        'created_by.name',
+        'updated_by.id',
+        'updated_by.name',
+      ])
+      .where('menu.parent IS NULL')
+      .orderBy('menu.name', 'ASC')
+      .getMany();
+
+    if (!success) {
+      throw new Exception('Not found.', 404);
+    }
+
+    return success;
+  }
+
   async findOneByName(name: string): Promise<Menu | undefined> {
     const exist = await this.menuRepository.findOne({
       where: { name },
