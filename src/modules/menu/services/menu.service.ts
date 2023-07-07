@@ -86,8 +86,9 @@ export class MenuService {
   async findOneById(id: string): Promise<Menu | undefined> {
     const exist = await this.menuRepository.findOne({
       where: { id },
-      relations: ['subMenus', 'created_by', 'updated_by'],
+      relations: ['sub_menu', 'created_by', 'updated_by'],
       select: {
+        sub_menu: { id: true, name: true, path: true },
         created_by: { id: true, name: true },
         updated_by: { id: true, name: true },
       },

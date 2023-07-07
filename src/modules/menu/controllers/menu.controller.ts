@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -31,6 +32,12 @@ export class MenuController {
   @Get()
   async List() {
     const result = await this.menuService.getAllMenu();
+    return { statusCode: 200, message: 'Success.', data: result };
+  }
+
+  @Get(':id')
+  async Get(@Param('id') id: string) {
+    const result = await this.menuService.findOneById(id);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }
