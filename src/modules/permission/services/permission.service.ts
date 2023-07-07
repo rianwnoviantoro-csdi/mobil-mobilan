@@ -31,7 +31,7 @@ export class PermissionService {
 
     if (!success) throw new Exception('Something went wrong.', 500);
 
-    return 'Success';
+    return success;
   }
 
   async getList(): Promise<Permission[] | undefined> {

@@ -6,6 +6,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { RoleModule } from './modules/role/role.module';
 import { PermissionModule } from './modules/permission/permission.module';
+import { MenuModule } from './modules/menu/menu.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PermissionModule } from './modules/permission/permission.module';
     UserModule,
     RoleModule,
     PermissionModule,
+    MenuModule,
   ],
   controllers: [],
   providers: [
