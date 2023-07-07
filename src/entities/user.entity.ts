@@ -9,7 +9,9 @@ export interface IUser {
   password?: string;
   is_active?: boolean;
   created_at?: Date;
+  created_by?: User;
   updated_at?: Date;
+  updated_by?: User;
 
   role?: Role;
 }
@@ -30,5 +32,5 @@ export class User extends AbstractEntity<User> {
 
   @ManyToOne(() => Role, (role) => role.users, { cascade: true })
   @JoinColumn({ name: 'role_id' })
-  role: string;
+  role: Role;
 }

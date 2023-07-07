@@ -1,6 +1,7 @@
 import { AbstractEntity } from 'src/entities/database.entity';
 import { Entity, Column } from 'typeorm';
 import { Role } from './role.entity';
+import { User } from './user.entity';
 
 export interface IPermission {
   id?: string;
@@ -8,7 +9,9 @@ export interface IPermission {
   name?: string;
   is_active?: boolean;
   created_at?: Date;
+  created_by?: User;
   updated_at?: Date;
+  updated_by?: User;
 
   roles?: Role[];
 }

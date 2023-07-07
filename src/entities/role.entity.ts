@@ -9,7 +9,9 @@ export interface IRole {
   name?: string;
   is_active?: boolean;
   created_at?: Date;
+  created_by?: User;
   updated_at?: Date;
+  updated_by?: User;
 
   permissions?: Permission[];
 }

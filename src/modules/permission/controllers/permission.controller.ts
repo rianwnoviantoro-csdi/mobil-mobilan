@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,8 +20,11 @@ export class PermissionController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Permissions('create:permission')
-  async create(@Body(new ValidationPipe()) body: CreatePermissionDTO) {
-    const result = await this.permissionService.create(body);
+  async create(
+    @Body(new ValidationPipe()) body: CreatePermissionDTO,
+    @Req() req: any,
+  ) {
+    const result = await this.permissionService.create(body, req.user);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 

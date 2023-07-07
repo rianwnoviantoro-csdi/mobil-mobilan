@@ -13,7 +13,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly entityManager: EntityManager,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -28,7 +27,7 @@ export class UserService {
       password: await bcrypt.hash(body.password, 10),
     });
 
-    const success = await this.entityManager.save(userInstance);
+    const success = await this.userRepository.save(userInstance);
 
     if (!success) throw new Exception('Something went wrong.', 500);
 
