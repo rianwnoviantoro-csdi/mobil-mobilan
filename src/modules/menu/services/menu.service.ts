@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from 'src/entities/menu.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateMenuDTO } from '../dto/create-menu.dto';
 import { Exception } from 'src/utils/custom-exception';
 import slugify from 'slugify';
+import {
+  PaginationHelper,
+  PaginationResult,
+  QueryOptions,
+} from 'src/utils/pagination';
 
 @Injectable()
 export class MenuService {
@@ -41,13 +46,11 @@ export class MenuService {
     return success;
   }
 
-  async getAllMenu(): Promise<Menu[] | undefined> {
-    const success = await this.menuRepository
-      .createQueryBuilder('menu')
-      .leftJoinAndSelect('menu.sub_menu', 'sub_menu')
-      .leftJoinAndSelect('menu.created_by', 'created_by')
-      .leftJoinAndSelect('menu.updated_by', 'updated_by')
-      .select([
+  async getAllMenu(options: QueryOptions): Promise<PaginationResult<Menu>> {
+    const queryOptions = {
+      alias: 'menu',
+      relations: ['sub_menu', 'created_by', 'updated_by'],
+      selects: [
         'menu',
         'sub_menu.id',
         'sub_menu.name',
@@ -56,16 +59,15 @@ export class MenuService {
         'created_by.name',
         'updated_by.id',
         'updated_by.name',
-      ])
-      .where('menu.parent IS NULL')
-      .orderBy('menu.name', 'ASC')
-      .getMany();
+      ],
+      filter: 'menu.parent IS NULL',
+      orderBy: 'menu.name',
+      page: options.page || 1,
+      limit: options.limit || 10,
+    };
 
-    if (!success) {
-      throw new Exception('Not found.', 404);
-    }
-
-    return success;
+    const paginationHelper = new PaginationHelper<Menu>(this.menuRepository);
+    return await paginationHelper.paginate(queryOptions);
   }
 
   async findOneByName(name: string): Promise<Menu | undefined> {

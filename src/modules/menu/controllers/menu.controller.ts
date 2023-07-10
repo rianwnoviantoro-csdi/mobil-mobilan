@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
   ValidationPipe,
@@ -30,8 +31,13 @@ export class MenuController {
   }
 
   @Get()
-  async List() {
-    const result = await this.menuService.getAllMenu();
+  async List(@Query('page') page = 1, @Query('limit') limit = 10) {
+    const options = {
+      page: page,
+      limit: limit,
+    };
+
+    const result = await this.menuService.getAllMenu(options);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 
