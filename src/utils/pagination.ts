@@ -50,23 +50,37 @@ export class PaginationHelper<T> {
         filterValue = this.stringToBoolean(filterValue.toString());
       }
 
-      if (typeof filterValue === 'boolean') {
+      if (typeof filterValue === 'string') {
+        const hypen = await this.countHyphens(filterValue);
+
+        if (hypen >= 4) {
+          queryBuilder.andWhere(`${queryOptions.alias}.${filterKey} = :uuid`, {
+            uuid: filterValue.toString(),
+          });
+        }
+
+        if (hypen < 4 && filterKey !== 'parent') {
+          queryBuilder.andWhere(
+            `${queryOptions.alias}.${filterKey} ILike :string`,
+            {
+              string: `%${filterValue.toString()}%`,
+            },
+          );
+        }
+
+        if (
+          (hypen < 4 && filterValue === 'null') ||
+          filterValue === 'not null'
+        ) {
+          queryBuilder.andWhere(
+            `${
+              queryOptions.alias
+            }.${filterKey} IS ${filterValue.toUpperCase()}`,
+          );
+        }
+      } else if (typeof filterValue === 'boolean') {
         queryBuilder.andWhere(
           `${queryOptions.alias}.${filterKey} = ${filterValue}`,
-        );
-      } else if (typeof filterValue === 'string') {
-        queryBuilder.andWhere(
-          `${queryOptions.alias}.${filterKey} ~* :filterValue`,
-          {
-            filterValue: `.*${filterValue}.*`,
-          },
-        );
-      } else {
-        queryBuilder.andWhere(
-          `${queryOptions.alias}.${filterKey} = :filterValue`,
-          {
-            filterValue,
-          },
         );
       }
     });
@@ -108,7 +122,13 @@ export class PaginationHelper<T> {
     return { skipKeys, filteredFilters };
   }
 
-  private stringToBoolean(value: string): boolean {
+  private stringToBoolean(value: string) {
     return value.toLowerCase() === 'true';
+  }
+
+  private async countHyphens(str: string) {
+    const hyphenRegex = /-/g;
+    const matches = str.match(hyphenRegex);
+    return matches ? matches.length : 0;
   }
 }
