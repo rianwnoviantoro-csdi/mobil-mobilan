@@ -7,6 +7,11 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Exception } from 'src/utils/custom-exception';
 import { LoginUserDTO } from '../dto/login-user.dto';
+import {
+  PaginationHelper,
+  PaginationResult,
+  QueryOptions,
+} from 'src/utils/pagination';
 
 @Injectable()
 export class UserService {
@@ -76,6 +81,33 @@ export class UserService {
     if (!exist) return undefined;
 
     return exist;
+  }
+
+  async getList(options: QueryOptions): Promise<PaginationResult<User>> {
+    const queryOptions = {
+      alias: 'user',
+      relations: ['created_by', 'updated_by'],
+      selects: [
+        'user.id',
+        'user.name',
+        'user.email',
+        'user.is_active',
+        'user.created_at',
+        'user.updated_at',
+        'created_by.id',
+        'created_by.name',
+        'updated_by.id',
+        'updated_by.name',
+      ],
+      filter: '',
+      orderBy: '',
+      page: options.page || 1,
+      limit: options.limit || 10,
+    };
+
+    const paginationHelper = new PaginationHelper<User>(this.userRepository);
+
+    return await paginationHelper.paginate(queryOptions);
   }
 
   async validateUser(userId: string) {

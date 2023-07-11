@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { CreateRoleDTO } from '../dto/create-role.dto';
 import { Exception } from 'src/utils/custom-exception';
 import { PermissionService } from 'src/modules/permission/services/permission.service';
+import {
+  PaginationHelper,
+  PaginationResult,
+  QueryOptions,
+} from 'src/utils/pagination';
 
 @Injectable()
 export class RoleService {
@@ -46,16 +51,26 @@ export class RoleService {
     return roleInstance;
   }
 
-  async getList(): Promise<Role[] | undefined> {
-    const result = await this.roleRepository.find({
+  async getList(options: QueryOptions): Promise<PaginationResult<Role>> {
+    const queryOptions = {
+      alias: 'role',
       relations: ['created_by', 'updated_by'],
-      select: {
-        created_by: { id: true, name: true },
-        updated_by: { id: true, name: true },
-      },
-    });
+      selects: [
+        'role',
+        'created_by.id',
+        'created_by.name',
+        'updated_by.id',
+        'updated_by.name',
+      ],
+      filter: '',
+      orderBy: '',
+      page: options.page || 1,
+      limit: options.limit || 10,
+    };
 
-    return result;
+    const paginationHelper = new PaginationHelper<Role>(this.roleRepository);
+
+    return await paginationHelper.paginate(queryOptions);
   }
 
   async findOneByName(name: string): Promise<Role | undefined> {

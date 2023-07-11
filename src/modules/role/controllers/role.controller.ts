@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   UseGuards,
   ValidationPipe,
@@ -31,8 +32,13 @@ export class RoleController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Permissions('read:role')
-  async list() {
-    const result = await this.roleService.getList();
+  async list(@Query('page') page = 1, @Query('limit') limit = 10) {
+    const options = {
+      page: page,
+      limit: limit,
+    };
+
+    const result = await this.roleService.getList(options);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

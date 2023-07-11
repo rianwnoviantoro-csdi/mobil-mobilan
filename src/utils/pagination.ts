@@ -32,10 +32,15 @@ export class PaginationHelper<T> {
       );
     }
 
-    queryBuilder
-      .select(queryOptions.selects)
-      .where(queryOptions.filter)
-      .orderBy(queryOptions.orderBy, 'ASC');
+    queryBuilder.select(queryOptions.selects);
+
+    if (queryOptions.filter) {
+      queryBuilder.where(queryOptions.filter);
+    }
+
+    if (queryOptions.orderBy) {
+      queryBuilder.orderBy(queryOptions.orderBy, 'ASC');
+    }
 
     const [items, totalItems] = await queryBuilder
       .skip((page - 1) * limit)

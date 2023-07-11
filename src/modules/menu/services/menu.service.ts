@@ -60,7 +60,7 @@ export class MenuService {
         'updated_by.id',
         'updated_by.name',
       ],
-      filter: 'menu.parent IS NULL',
+      filter: `menu.parent IS NULL`,
       orderBy: 'menu.name',
       page: options.page || 1,
       limit: options.limit || 10,

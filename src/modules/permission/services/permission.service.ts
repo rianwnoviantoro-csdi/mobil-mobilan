@@ -4,6 +4,11 @@ import { Permission } from 'src/entities/permission.entity';
 import { Repository } from 'typeorm';
 import { CreatePermissionDTO } from '../dto/create-permission.dto';
 import { Exception } from 'src/utils/custom-exception';
+import {
+  PaginationHelper,
+  PaginationResult,
+  QueryOptions,
+} from 'src/utils/pagination';
 
 @Injectable()
 export class PermissionService {
@@ -34,16 +39,28 @@ export class PermissionService {
     return success;
   }
 
-  async getList(): Promise<Permission[] | undefined> {
-    const result = await this.permissionRepository.find({
+  async getList(options: QueryOptions): Promise<PaginationResult<Permission>> {
+    const queryOptions = {
+      alias: 'permission',
       relations: ['created_by', 'updated_by'],
-      select: {
-        created_by: { id: true, name: true },
-        updated_by: { id: true, name: true },
-      },
-    });
+      selects: [
+        'permission',
+        'created_by.id',
+        'created_by.name',
+        'updated_by.id',
+        'updated_by.name',
+      ],
+      filter: '',
+      orderBy: '',
+      page: options.page || 1,
+      limit: options.limit || 10,
+    };
 
-    return result;
+    const paginationHelper = new PaginationHelper<Permission>(
+      this.permissionRepository,
+    );
+
+    return await paginationHelper.paginate(queryOptions);
   }
 
   async findOneByName(name: string): Promise<Permission | undefined> {
