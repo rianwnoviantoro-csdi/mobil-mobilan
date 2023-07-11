@@ -11,6 +11,7 @@ import {
   PaginationHelper,
   PaginationResult,
   QueryOptions,
+  UserFilters,
 } from 'src/utils/pagination';
 
 @Injectable()
@@ -83,7 +84,10 @@ export class UserService {
     return exist;
   }
 
-  async getList(options: QueryOptions): Promise<PaginationResult<User>> {
+  async getList(
+    options: QueryOptions,
+    filters: UserFilters,
+  ): Promise<PaginationResult<User>> {
     const queryOptions = {
       alias: 'user',
       relations: ['created_by', 'updated_by'],
@@ -107,7 +111,7 @@ export class UserService {
 
     const paginationHelper = new PaginationHelper<User>(this.userRepository);
 
-    return await paginationHelper.paginate(queryOptions);
+    return await paginationHelper.paginate(queryOptions, filters);
   }
 
   async validateUser(userId: string) {

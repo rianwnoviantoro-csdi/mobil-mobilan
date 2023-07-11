@@ -13,6 +13,7 @@ import { CreateRoleDTO } from '../dto/create-role.dto';
 import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Permissions } from 'src/decorators/role.decorator';
+import { UserFilters } from 'src/utils/pagination';
 
 @Controller('role')
 export class RoleController {
@@ -32,13 +33,17 @@ export class RoleController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Permissions('read:role')
-  async list(@Query('page') page = 1, @Query('limit') limit = 10) {
+  async list(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query() filters: UserFilters,
+  ) {
     const options = {
       page: page,
       limit: limit,
     };
 
-    const result = await this.roleService.getList(options);
+    const result = await this.roleService.getList(options, filters);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

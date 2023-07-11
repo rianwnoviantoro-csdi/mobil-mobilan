@@ -9,6 +9,7 @@ import {
   PaginationHelper,
   PaginationResult,
   QueryOptions,
+  UserFilters,
 } from 'src/utils/pagination';
 
 @Injectable()
@@ -51,7 +52,10 @@ export class RoleService {
     return roleInstance;
   }
 
-  async getList(options: QueryOptions): Promise<PaginationResult<Role>> {
+  async getList(
+    options: QueryOptions,
+    filters: UserFilters,
+  ): Promise<PaginationResult<Role>> {
     const queryOptions = {
       alias: 'role',
       relations: ['created_by', 'updated_by'],
@@ -70,7 +74,7 @@ export class RoleService {
 
     const paginationHelper = new PaginationHelper<Role>(this.roleRepository);
 
-    return await paginationHelper.paginate(queryOptions);
+    return await paginationHelper.paginate(queryOptions, filters);
   }
 
   async findOneByName(name: string): Promise<Role | undefined> {

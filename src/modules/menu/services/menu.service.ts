@@ -9,6 +9,7 @@ import {
   PaginationHelper,
   PaginationResult,
   QueryOptions,
+  UserFilters,
 } from 'src/utils/pagination';
 
 @Injectable()
@@ -46,7 +47,10 @@ export class MenuService {
     return success;
   }
 
-  async getAllMenu(options: QueryOptions): Promise<PaginationResult<Menu>> {
+  async getAllMenu(
+    options: QueryOptions,
+    filters: UserFilters,
+  ): Promise<PaginationResult<Menu>> {
     const queryOptions = {
       alias: 'menu',
       relations: ['sub_menu', 'created_by', 'updated_by'],
@@ -67,7 +71,7 @@ export class MenuService {
     };
 
     const paginationHelper = new PaginationHelper<Menu>(this.menuRepository);
-    return await paginationHelper.paginate(queryOptions);
+    return await paginationHelper.paginate(queryOptions, filters);
   }
 
   async findOneByName(name: string): Promise<Menu | undefined> {

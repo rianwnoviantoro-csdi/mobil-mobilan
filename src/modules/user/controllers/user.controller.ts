@@ -13,6 +13,7 @@ import { LoginUserDTO } from '../dto/login-user.dto';
 import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Permissions } from 'src/decorators/role.decorator';
+import { UserFilters } from 'src/utils/pagination';
 
 @Controller('user')
 export class UserController {
@@ -33,13 +34,17 @@ export class UserController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Permissions('read:user')
-  async list(@Query('page') page = 1, @Query('limit') limit = 10) {
+  async list(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query() filters: UserFilters,
+  ) {
     const options = {
       page: page,
       limit: limit,
     };
 
-    const result = await this.userService.getList(options);
+    const result = await this.userService.getList(options, filters);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

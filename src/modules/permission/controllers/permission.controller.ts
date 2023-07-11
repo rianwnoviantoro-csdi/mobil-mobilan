@@ -13,6 +13,7 @@ import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Permissions } from 'src/decorators/role.decorator';
 import { CreatePermissionDTO } from '../dto/create-permission.dto';
+import { UserFilters } from 'src/utils/pagination';
 
 @Controller('permission')
 export class PermissionController {
@@ -32,13 +33,17 @@ export class PermissionController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Permissions('read:permission')
-  async list(@Query('page') page = 1, @Query('limit') limit = 10) {
+  async list(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query() filters: UserFilters,
+  ) {
     const options = {
       page: page,
       limit: limit,
     };
 
-    const result = await this.permissionService.getList(options);
+    const result = await this.permissionService.getList(options, filters);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

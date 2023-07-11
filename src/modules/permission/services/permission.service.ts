@@ -8,6 +8,7 @@ import {
   PaginationHelper,
   PaginationResult,
   QueryOptions,
+  UserFilters,
 } from 'src/utils/pagination';
 
 @Injectable()
@@ -39,7 +40,10 @@ export class PermissionService {
     return success;
   }
 
-  async getList(options: QueryOptions): Promise<PaginationResult<Permission>> {
+  async getList(
+    options: QueryOptions,
+    filters: UserFilters,
+  ): Promise<PaginationResult<Permission>> {
     const queryOptions = {
       alias: 'permission',
       relations: ['created_by', 'updated_by'],
@@ -60,7 +64,7 @@ export class PermissionService {
       this.permissionRepository,
     );
 
-    return await paginationHelper.paginate(queryOptions);
+    return await paginationHelper.paginate(queryOptions, filters);
   }
 
   async findOneByName(name: string): Promise<Permission | undefined> {

@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Permissions } from 'src/decorators/role.decorator';
 import { CreateMenuDTO } from '../dto/create-menu.dto';
+import { UserFilters } from 'src/utils/pagination';
 
 @Controller('menu')
 export class MenuController {
@@ -31,13 +32,17 @@ export class MenuController {
   }
 
   @Get()
-  async List(@Query('page') page = 1, @Query('limit') limit = 10) {
+  async List(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query() filters: UserFilters,
+  ) {
     const options = {
       page: page,
       limit: limit,
     };
 
-    const result = await this.menuService.getAllMenu(options);
+    const result = await this.menuService.getAllMenu(options, filters);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 
