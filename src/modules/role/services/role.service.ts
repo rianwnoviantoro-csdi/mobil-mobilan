@@ -11,6 +11,7 @@ import {
   QueryOptions,
   UserFilters,
 } from 'src/utils/pagination';
+import { ReassignPermissionDTO } from '../dto/reassign-permission.dto';
 
 @Injectable()
 export class RoleService {
@@ -49,7 +50,63 @@ export class RoleService {
 
     if (!success) throw new Exception('Something went wrong.', 500);
 
-    return roleInstance;
+    return success;
+  }
+
+  async assignPermission(
+    id: string,
+    body: ReassignPermissionDTO,
+    req: any,
+  ): Promise<Role | any> {
+    const existRole = await this.findOneById(id);
+
+    if (!existRole) throw new Exception(`Role ${id} not found`, 400);
+
+    if (typeof body.permissions != 'undefined') {
+      // eslint-disable-next-line prefer-const
+      for await (let permission of body.permissions) {
+        const value = await this.permissionService.findOneById(
+          permission.toString(),
+        );
+
+        existRole.permissions.push(value);
+      }
+    }
+
+    const success = await this.roleRepository.save(existRole);
+
+    if (!success) throw new Exception('Something went wrong.', 500);
+
+    return success;
+  }
+
+  async demotePermission(
+    id: string,
+    body: ReassignPermissionDTO,
+    req: any,
+  ): Promise<Role | any> {
+    const existRole = await this.findOneById(id);
+
+    if (!existRole) throw new Exception(`Role ${id} not found`, 400);
+
+    if (typeof body.permissions != 'undefined') {
+      // eslint-disable-next-line prefer-const
+      for await (let permission of body.permissions) {
+        const value = await this.permissionService.findOneById(
+          permission.toString(),
+        );
+
+        existRole.permissions = existRole.permissions.filter((category) => {
+          return category.id !== value.id;
+        });
+      }
+    }
+
+    const success = await this.roleRepository.save(existRole);
+
+    if (!success) throw new Exception('Something went wrong.', 500);
+
+    return success;
   }
 
   async getList(
@@ -80,7 +137,22 @@ export class RoleService {
   async findOneByName(name: string): Promise<Role | undefined> {
     const exist = await this.roleRepository.findOne({
       where: { name },
-      relations: ['created_by', 'updated_by'],
+      relations: ['permissions', 'created_by', 'updated_by'],
+      select: {
+        created_by: { id: true, name: true },
+        updated_by: { id: true, name: true },
+      },
+    });
+
+    if (!exist) return undefined;
+
+    return exist;
+  }
+
+  async findOneById(id: string): Promise<Role | undefined> {
+    const exist = await this.roleRepository.findOne({
+      where: { id },
+      relations: ['permissions', 'created_by', 'updated_by'],
       select: {
         created_by: { id: true, name: true },
         updated_by: { id: true, name: true },
