@@ -7,6 +7,7 @@ import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { RoleModule } from './modules/role/role.module';
 import { PermissionModule } from './modules/permission/permission.module';
 import { MenuModule } from './modules/menu/menu.module';
+import { CarModule } from './modules/car/car.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MenuModule } from './modules/menu/menu.module';
     RoleModule,
     PermissionModule,
     MenuModule,
+    CarModule,
   ],
   controllers: [],
   providers: [
