@@ -8,6 +8,9 @@ import { RoleModule } from './modules/role/role.module';
 import { PermissionModule } from './modules/permission/permission.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { CarModule } from './modules/car/car.module';
+import { BrandService } from './modules/brand/services/brand.service';
+import { BrandController } from './modules/brand/controllers/brand.controller';
+import { BrandModule } from './modules/brand/brand.module';
 
 @Module({
   imports: [
@@ -18,6 +21,7 @@ import { CarModule } from './modules/car/car.module';
     PermissionModule,
     MenuModule,
     CarModule,
+    BrandModule,
   ],
   controllers: [],
   providers: [

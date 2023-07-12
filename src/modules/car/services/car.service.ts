@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Car } from 'src/entities/car.entity';
 import { Repository } from 'typeorm';
-import { CreateCarDTO } from '../dto/create-car/dto';
+import { CreateCarDTO } from '../dto/create-brand.dto';
 import { Exception } from 'src/utils/custom-exception';
 import slugify from 'slugify';
 import {
@@ -11,21 +11,30 @@ import {
   QueryOptions,
   UserFilters,
 } from 'src/utils/pagination';
+import { BrandService } from 'src/modules/brand/services/brand.service';
 
 @Injectable()
 export class CarService {
   constructor(
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
+    private readonly brandService: BrandService,
   ) {}
 
   async create(body: CreateCarDTO, req: any): Promise<Car | any> {
-    const existMenu = await this.findOneByName(body.name);
+    const existCar = await this.findOneByName(body.name);
 
-    if (existMenu) throw new Exception(`Car ${body.name} already exists`, 400);
+    if (existCar) throw new Exception(`Car ${body.name} already exists`, 400);
+
+    const existBrand = await this.brandService.findOneById(
+      body.brand.toString(),
+    );
+
+    if (!existBrand) throw new Exception(`Brand ${body.brand} not found`, 404);
 
     const carInstance = new Car({
       ...body,
+      brand: existBrand,
       slug: slugify(body.name.toLocaleLowerCase()),
       created_by: req.id,
       updated_by: req.id,

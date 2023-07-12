@@ -8,25 +8,24 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { CarService } from '../services/car.service';
+import { BrandService } from '../services/brand.service';
 import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
-import { Permissions } from 'src/decorators/role.decorator';
-import { CreateCarDTO } from '../dto/create-brand.dto';
+import { CreateBrandDTO } from '../dto/create-brand.dto';
 import { UserFilters } from 'src/utils/pagination';
 
-@Controller('car')
-export class CarController {
-  constructor(private readonly carService: CarService) {}
+@Controller('brand')
+export class BrandController {
+  constructor(private readonly brandService: BrandService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   // @Permissions('create:car')
   async create(
-    @Body(new ValidationPipe()) body: CreateCarDTO,
+    @Body(new ValidationPipe()) body: CreateBrandDTO,
     @Req() req: any,
   ) {
-    const result = await this.carService.create(body, req.user);
+    const result = await this.brandService.create(body, req.user);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 
@@ -41,7 +40,7 @@ export class CarController {
       limit: limit,
     };
 
-    const result = await this.carService.getAllMenu(options, filters);
+    const result = await this.brandService.getAllBrand(options, filters);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

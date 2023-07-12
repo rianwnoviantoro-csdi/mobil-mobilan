@@ -1,7 +1,7 @@
 import { AbstractEntity } from 'src/entities/database.entity';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
-import { Permission } from './permission.entity';
+import { Brand } from './brand.entity';
 
 export interface ICar {
   id?: string;
@@ -15,7 +15,7 @@ export interface ICar {
   updated_at?: Date;
   updated_by?: User;
 
-  permissions?: Permission[];
+  brand?: Brand;
 }
 
 export enum ECar {
@@ -48,6 +48,12 @@ export class Car extends AbstractEntity<Car> {
   @Column({ name: 'slug', nullable: false, unique: true })
   slug: string;
 
+  @ManyToOne(() => Brand, (brand) => brand.cars, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'brand_id' })
+  brand: Brand;
+
   @Column({
     name: 'type',
     type: 'enum',
@@ -56,7 +62,7 @@ export class Car extends AbstractEntity<Car> {
   })
   type: ECar;
 
-  @Column({ name: 'price', nullable: false, unique: true })
+  @Column({ name: 'price', nullable: false, default: 0 })
   price: number;
 
   @Column({ name: 'is_active', nullable: false, default: true })
