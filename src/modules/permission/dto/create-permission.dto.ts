@@ -5,4 +5,8 @@ export class CreatePermissionDTO implements IPermission {
   @IsNotEmpty()
   @IsString()
   name?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  code?: string;
 }

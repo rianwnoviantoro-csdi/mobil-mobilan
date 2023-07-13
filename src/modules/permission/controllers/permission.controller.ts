@@ -21,7 +21,7 @@ export class PermissionController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Permissions('create:permission')
+  @Permissions('write:permission')
   async create(
     @Body(new ValidationPipe()) body: CreatePermissionDTO,
     @Req() req: any,

@@ -24,7 +24,7 @@ export class RoleController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Permissions('create:role')
+  @Permissions('write:role')
   async create(
     @Body(new ValidationPipe()) body: CreateRoleDTO,
     @Req() req: any,
@@ -52,7 +52,7 @@ export class RoleController {
 
   @Patch(':id/assign-permission')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Permissions('update:role')
+  @Permissions('write:role')
   async assignPermission(
     @Param('id') id: string,
     @Body(new ValidationPipe()) body: ReassignPermissionDTO,
@@ -65,7 +65,7 @@ export class RoleController {
 
   @Patch(':id/demote-permission')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Permissions('update:role')
+  @Permissions('write:role')
   async demotePermission(
     @Param('id') id: string,
     @Body(new ValidationPipe()) body: ReassignPermissionDTO,

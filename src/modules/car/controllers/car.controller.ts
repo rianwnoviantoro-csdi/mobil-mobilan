@@ -21,7 +21,7 @@ export class CarController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Permissions('create:car')
+  @Permissions('write:car')
   async create(
     @Body(new ValidationPipe()) body: CreateCarDTO,
     @Req() req: any,
@@ -41,7 +41,7 @@ export class CarController {
       limit: limit,
     };
 
-    const result = await this.carService.getAllMenu(options, filters);
+    const result = await this.carService.getAllCar(options, filters);
     return { statusCode: 200, message: 'Success.', data: result };
   }
 }

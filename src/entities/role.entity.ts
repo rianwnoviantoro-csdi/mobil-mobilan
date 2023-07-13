@@ -18,8 +18,8 @@ export interface IRole {
 
 @Entity('roles')
 export class Role extends AbstractEntity<Role> {
-  @Column({ name: 'type', nullable: false, unique: true })
-  type: string;
+  @Column({ name: 'code', nullable: false, unique: true })
+  code: string;
 
   @Column({ name: 'name', nullable: false, unique: true })
   name: string;
@@ -34,10 +34,10 @@ export class Role extends AbstractEntity<Role> {
   @ManyToMany(() => Permission, { cascade: true })
   @JoinTable({
     name: 'role_permission',
-    joinColumn: { name: 'role_id', referencedColumnName: 'id' },
+    joinColumn: { name: 'role_code', referencedColumnName: 'code' },
     inverseJoinColumn: {
-      name: 'permission_id',
-      referencedColumnName: 'id',
+      name: 'permission_code',
+      referencedColumnName: 'code',
     },
   })
   permissions: Permission[];

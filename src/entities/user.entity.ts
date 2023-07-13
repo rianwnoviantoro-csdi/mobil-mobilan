@@ -30,7 +30,10 @@ export class User extends AbstractEntity<User> {
   @Column({ name: 'is_active', nullable: false, default: true })
   is_active: boolean;
 
-  @ManyToOne(() => Role, (role) => role.users, { cascade: true })
-  @JoinColumn({ name: 'role_id' })
+  @ManyToOne(() => Role, (role) => role.users, {
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'role_code', referencedColumnName: 'code' })
   role: Role;
 }

@@ -21,6 +21,9 @@ export class Permission extends AbstractEntity<Permission> {
   @Column({ name: 'name', nullable: false, unique: true })
   name: string;
 
+  @Column({ name: 'code', nullable: false, unique: true })
+  code: string;
+
   @Column({ name: 'is_active', nullable: false, default: true })
   is_active: boolean;
 }

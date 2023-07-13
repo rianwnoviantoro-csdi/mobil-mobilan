@@ -47,7 +47,7 @@ export class CarService {
     return success;
   }
 
-  async getAllMenu(
+  async getAllCar(
     options: QueryOptions,
     filters: UserFilters,
   ): Promise<PaginationResult<Car>> {

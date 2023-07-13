@@ -13,6 +13,7 @@ import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { CreateBrandDTO } from '../dto/create-brand.dto';
 import { UserFilters } from 'src/utils/pagination';
+import { Permissions } from 'src/decorators/role.decorator';
 
 @Controller('brand')
 export class BrandController {
@@ -20,7 +21,7 @@ export class BrandController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Permissions('create:car')
+  @Permissions('write:brand')
   async create(
     @Body(new ValidationPipe()) body: CreateBrandDTO,
     @Req() req: any,

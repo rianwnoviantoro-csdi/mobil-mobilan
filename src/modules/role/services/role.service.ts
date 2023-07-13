@@ -32,7 +32,7 @@ export class RoleService {
     if (typeof body.permissions != 'undefined') {
       // eslint-disable-next-line prefer-const
       for await (let permission of body.permissions) {
-        const value = await this.permissionService.findOneById(
+        const value = await this.permissionService.findOneByCode(
           permission.toString(),
         );
         permissions.push(value);
@@ -65,7 +65,7 @@ export class RoleService {
     if (typeof body.permissions != 'undefined') {
       // eslint-disable-next-line prefer-const
       for await (let permission of body.permissions) {
-        const value = await this.permissionService.findOneById(
+        const value = await this.permissionService.findOneByCode(
           permission.toString(),
         );
 
@@ -77,7 +77,7 @@ export class RoleService {
 
     if (!success) throw new Exception('Something went wrong.', 500);
 
-    return success;
+    return existRole;
   }
 
   async demotePermission(
@@ -92,7 +92,7 @@ export class RoleService {
     if (typeof body.permissions != 'undefined') {
       // eslint-disable-next-line prefer-const
       for await (let permission of body.permissions) {
-        const value = await this.permissionService.findOneById(
+        const value = await this.permissionService.findOneByCode(
           permission.toString(),
         );
 
@@ -115,9 +115,12 @@ export class RoleService {
   ): Promise<PaginationResult<Role>> {
     const queryOptions = {
       alias: 'role',
-      relations: ['created_by', 'updated_by'],
+      relations: ['permissions', 'created_by', 'updated_by'],
       selects: [
         'role',
+        'permissions.id',
+        'permissions.code',
+        'permissions.name',
         'created_by.id',
         'created_by.name',
         'updated_by.id',
@@ -152,6 +155,21 @@ export class RoleService {
   async findOneById(id: string): Promise<Role | undefined> {
     const exist = await this.roleRepository.findOne({
       where: { id },
+      relations: ['permissions', 'created_by', 'updated_by'],
+      select: {
+        created_by: { id: true, name: true },
+        updated_by: { id: true, name: true },
+      },
+    });
+
+    if (!exist) return undefined;
+
+    return exist;
+  }
+
+  async findOneByCode(code: string): Promise<Role | undefined> {
+    const exist = await this.roleRepository.findOne({
+      where: { code },
       relations: ['permissions', 'created_by', 'updated_by'],
       select: {
         created_by: { id: true, name: true },

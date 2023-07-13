@@ -96,4 +96,19 @@ export class PermissionService {
 
     return exist;
   }
+
+  async findOneByCode(code: string): Promise<Permission | undefined> {
+    const exist = await this.permissionRepository.findOne({
+      where: { code },
+      relations: ['created_by', 'updated_by'],
+      select: {
+        created_by: { id: true, name: true },
+        updated_by: { id: true, name: true },
+      },
+    });
+
+    if (!exist) return undefined;
+
+    return exist;
+  }
 }

@@ -5,11 +5,11 @@ import { IRole } from 'src/entities/role.entity';
 export class CreateRoleDTO implements IRole {
   @IsNotEmpty()
   @IsString()
-  type?: string;
+  name?: string;
 
   @IsNotEmpty()
   @IsString()
-  name?: string;
+  code?: string;
 
   permissions?: Permission[];
 }

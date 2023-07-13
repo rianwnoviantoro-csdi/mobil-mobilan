@@ -22,7 +22,7 @@ export class MenuController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Permissions('create:menu')
+  @Permissions('write:menu')
   async create(
     @Body(new ValidationPipe()) body: CreateMenuDTO,
     @Req() req: any,
